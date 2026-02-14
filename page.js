@@ -1,27 +1,24 @@
+import Image from "next/image";
+
 export default async function ProductDetails({ params }) {
   const { id } = params;
 
-  const res = await fetch(
-    `https://dummyjson.com/products/${id}`,
-    {
-      next: { revalidate: 60 },
-    }
-  );
-
+  const res = await fetch(`https://dummyjson.com/products/${id}`);
   const product = await res.json();
 
   return (
-    <div>
-      <h2>{product.title}</h2>
+    <div style={{ padding: "20px" }}>
+      <h1>{product.title}</h1>
 
-      <img
-        src={product.thumbnail}
-        alt={product.title}
-        width="200"
+      {/* Static image from public folder */}
+      <Image
+        src="/product.jpg"   // directly from public (NO /public prefix)
+        alt="Product Image"
+        width={400}
+        height={300}
       />
 
       <p><strong>Price:</strong> ${product.price}</p>
-      <p><strong>Brand:</strong> {product.brand}</p>
       <p>{product.description}</p>
     </div>
   );
