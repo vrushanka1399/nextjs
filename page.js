@@ -1,20 +1,28 @@
-import Link from "next/link";
+export default async function ProductDetails({ params }) {
+  const { id } = params;
 
-export default function ProductsPage() {
+  const res = await fetch(
+    `https://dummyjson.com/products/${id}`,
+    {
+      next: { revalidate: 60 },
+    }
+  );
+
+  const product = await res.json();
+
   return (
     <div>
-      <h1>Products Page</h1>
-      <p>Select a product:</p>
+      <h2>{product.title}</h2>
 
-      <ul>
-        {Array.from({ length: 10 }, (_, index) => (
-          <li key={index}>
-            <Link href={`/products/${index + 1}`}>
-              Product {index + 1}
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <img
+        src={product.thumbnail}
+        alt={product.title}
+        width="200"
+      />
+
+      <p><strong>Price:</strong> ${product.price}</p>
+      <p><strong>Brand:</strong> {product.brand}</p>
+      <p>{product.description}</p>
     </div>
   );
 }
