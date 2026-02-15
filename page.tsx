@@ -1,29 +1,42 @@
-import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/jwt";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function Dashboard() {
-  const cookieStore = cookies();
-  const token = cookieStore.get("token")?.value;
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-  if (!token) {
-    redirect("/login");
-  }
+export default function LoginPage() {
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  try {
-    const user = await verifyToken(token);
+  const handleLogin = async () => {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      body: JSON.stringify({ username, password }),
+      headers: { "Content-Type": "application/json" },
+    });
 
-    return (
-      <div>
-        <h1>Welcome {user.username}</h1>
-        <p>This is a protected dashboard.</p>
+    if (res.ok) {
+      router.push("/dashboard");
+    } else {
+      alert("Invalid credentials");
+    }
+  };
 
-        <form action="/api/logout" method="POST">
-          <button type="submit">Logout</button>
-        </form>
-      </div>
-    );
-  } catch {
-    redirect("/login");
-  }
+  return (
+    <div>
+      <h2>Login</h2>
+      <input
+        placeholder="Username"
+        onChange={(e) => setUsername(e.target.value)}
+      />
+      <br />
+      <input
+        type="password"
+        placeholder="Password"
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <br />
+      <button onClick={handleLogin}>Login</button>
+    </div>
+  );
 }
