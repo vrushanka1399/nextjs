@@ -1,45 +1,63 @@
 import Link from "next/link";
-import "./globals.css";
 
-export default function RootLayout({ children }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body>
+
+        {/* Header */}
         <header
           style={{
-            backgroundColor: "#222",
-            padding: "15px",
+            backgroundColor: "#111",
+            color: "white",
+            padding: "15px 20px",
             display: "flex",
-            justifyContent: "space-between",
             alignItems: "center",
+            justifyContent: "space-between",
           }}
         >
-          <h1 style={{ color: "white" }}>Products Store</h1>
+          {/* Logo + Title */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <img
+              src="/logo.png"
+              alt="Logo"
+              style={{ height: "40px" }}
+            />
+            <h2 style={{ margin: 0 }}>Products Store</h2>
+          </div>
 
-          <nav>
-            <Link href="/" style={{ color: "white", marginRight: "15px" }}>
+          {/* Navigation */}
+          <nav style={{ display: "flex", gap: "20px" }}>
+            <Link href="/" style={{ color: "white", textDecoration: "none" }}>
               Home
             </Link>
-            <Link href="/products" style={{ color: "white" }}>
+            <Link href="/products" style={{ color: "white", textDecoration: "none" }}>
               Products
             </Link>
           </nav>
         </header>
 
+        {/* Main Content */}
         <main style={{ padding: "20px", minHeight: "80vh" }}>
           {children}
         </main>
 
+        {/* Footer */}
         <footer
           style={{
             backgroundColor: "#222",
             color: "white",
-            padding: "10px",
             textAlign: "center",
+            padding: "10px",
           }}
         >
-          © 2026 Products Store
+          © 2026 Products Store. All rights reserved.
         </footer>
+
       </body>
     </html>
   );
