@@ -1,42 +1,53 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/products";
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = async () => {
+  async function handleLogin(e: React.FormEvent) {
+    e.preventDefault();
+
     const res = await fetch("/api/login", {
       method: "POST",
-      body: JSON.stringify({ username, password }),
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password }),
     });
 
     if (res.ok) {
-      router.push("/dashboard");
+      router.push(redirect);
     } else {
       alert("Invalid credentials");
     }
-  };
+  }
 
   return (
-    <div>
+    <div style={{ padding: "50px" }}>
       <h2>Login</h2>
-      <input
-        placeholder="Username"
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <br />
-      <input
-        type="password"
-        placeholder="Password"
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <br />
-      <button onClick={handleLogin}>Login</button>
+      <form onSubmit={handleLogin}>
+        <input
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <br /><br />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <br /><br />
+        <button type="submit">Login</button>
+      </form>
+
+      <p>Use: admin / 1234</p>
     </div>
   );
 }

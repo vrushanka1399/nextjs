@@ -1,10 +1,8 @@
-"use client";
-
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import { cookies } from "next/headers";
 
 export default function Header() {
-  const { data: session } = useSession();
+  const auth = cookies().get("auth");
 
   return (
     <header
@@ -13,47 +11,28 @@ export default function Header() {
         color: "white",
         padding: "15px 20px",
         display: "flex",
-        alignItems: "center",
         justifyContent: "space-between",
+        alignItems: "center",
       }}
     >
-      {/* Logo + Title */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-        <img src="/logo.png" alt="Logo" style={{ height: "40px" }} />
-        <h2 style={{ margin: 0 }}>Products Store</h2>
-      </div>
-
-      {/* Navigation */}
-      <nav style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-        <Link href="/" style={{ color: "white" }}>
+      <div style={{ display: "flex", gap: "20px" }}>
+        <Link href="/" style={{ color: "white", textDecoration: "none" }}>
           Home
         </Link>
-        <Link href="/products" style={{ color: "white" }}>
+        <Link href="/products" style={{ color: "white", textDecoration: "none" }}>
           Products
         </Link>
+      </div>
 
-        {session ? (
-          <>
-            <span>{session.user?.email}</span>
-            <button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              style={{
-                background: "red",
-                color: "white",
-                border: "none",
-                padding: "5px 10px",
-                cursor: "pointer",
-              }}
-            >
-              Logout
-            </button>
-          </>
-        ) : (
-          <Link href="/login" style={{ color: "white" }}>
-            Login
-          </Link>
-        )}
-      </nav>
+      {auth ? (
+        <form action="/api/logout" method="post">
+          <button type="submit">Logout</button>
+        </form>
+      ) : (
+        <Link href="/login" style={{ color: "white", textDecoration: "none" }}>
+          Login
+        </Link>
+      )}
     </header>
   );
 }
