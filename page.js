@@ -1,25 +1,42 @@
-import Image from "next/image";
+﻿import type { Metadata } from "next";
 
-export default async function ProductDetails({ params }) {
-  const { id } = params;
+type Props = {
+  params: { id: string };
+};
 
-  const res = await fetch(`https://dummyjson.com/products/${id}`);
-  const product = await res.json();
+async function getProduct(id: string) {
+  const res = await fetch(`https://dummyjson.com/products/${id}`, {
+    next: { revalidate: 60 },
+  });
+
+  return res.json();
+}
+
+// ✅ Dynamic Metadata
+export async function generateMetadata(
+  { params }: Props
+): Promise<Metadata> {
+  const product = await getProduct(params.id);
+
+  return {
+    title: `${product.title} - Products Store`,
+    description: product.description,
+  };
+}
+
+export default async function ProductDetail({ params }: Props) {
+  const product = await getProduct(params.id);
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div>
       <h1>{product.title}</h1>
-
-      {/* Static image from public folder */}
-      <Image
-        src="/product.jpg"   // directly from public (NO /public prefix)
-        alt="Product Image"
-        width={400}
-        height={300}
+      <img
+        src={product.thumbnail}
+        alt={product.title}
+        style={{ width: "300px" }}
       />
-
-      <p><strong>Price:</strong> ${product.price}</p>
       <p>{product.description}</p>
+      <h3>Price: ${product.price}</h3>
     </div>
   );
 }

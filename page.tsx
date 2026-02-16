@@ -1,26 +1,30 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import Link from "next/link";
 
-type Props = {
-  params: { id: string };
+export const metadata: Metadata = {
+  title: "Products Store - Products List",
+  description: "Browse all available products.",
 };
 
-// ?? Dynamic metadata function
-export async function generateMetadata(
-  { params }: Props
-): Promise<Metadata> {
-  const postId = params.id;
+export default async function ProductsPage() {
+  const res = await fetch("https://dummyjson.com/products", {
+    next: { revalidate: 60 }, // enables caching + ISR
+  });
 
-  return {
-    title: `Post ${postId} - My Blog`,
-    description: `This is the blog post number ${postId}`,
-  };
-}
+  const data = await res.json();
 
-export default function PostPage({ params }: Props) {
   return (
     <div>
-      <h1>Post {params.id}</h1>
-      <p>This page has dynamic metadata.</p>
+      <h1>Products</h1>
+      <ul>
+        {data.products.map((product: any) => (
+          <li key={product.id}>
+            <Link href={`/products/${product.id}`}>
+              {product.title}
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
