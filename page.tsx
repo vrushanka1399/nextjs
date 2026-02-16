@@ -1,53 +1,26 @@
-"use client";
+import { Metadata } from "next";
 
-import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+type Props = {
+  params: { id: string };
+};
 
-export default function LoginPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get("redirect") || "/products";
+// ?? Dynamic metadata function
+export async function generateMetadata(
+  { params }: Props
+): Promise<Metadata> {
+  const postId = params.id;
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  return {
+    title: `Post ${postId} - My Blog`,
+    description: `This is the blog post number ${postId}`,
+  };
+}
 
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password }),
-    });
-
-    if (res.ok) {
-      router.push(redirect);
-    } else {
-      alert("Invalid credentials");
-    }
-  }
-
+export default function PostPage({ params }: Props) {
   return (
-    <div style={{ padding: "50px" }}>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <br /><br />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <br /><br />
-        <button type="submit">Login</button>
-      </form>
-
-      <p>Use: admin / 1234</p>
+    <div>
+      <h1>Post {params.id}</h1>
+      <p>This page has dynamic metadata.</p>
     </div>
   );
 }
